@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Comment</title>
+</head>
+<body>
+
+<div th:insert="~{tickets/ticketOverview :: copyOverview}">copyOverview</div>
+<br/>
+<h3><a th:href="@{/tickets/{id}/overView(id=${ticket.getId()})}">History</a></h3>
+<br/>
+<h2>COMMENTS</h2>
+<div th:fragment="copyComments">
+<div th:each="comment : ${comments}">
+
+    <form th:method="PATCH" th:action="@{/tickets/action/{id}(id=${ticket.getId()})}" th:object="${comment}">
+        <a   th:text="${comment.getDate() + ', ' + comment.getUser_id()+ ','+
+    comment.getText()}">comment</a>
+
+        <a th:href="@{/tickets/{id}/edit(id=${ticket.getId()})}">Edit</a>
+        <a th:href="@{/tickets/{id}/overView(id=${ticket.getId()})}">overView</a>
+        <a th:href="@{/tickets}">All Tickets</a>
+
+    </form>
+</div>
+<br/>
+<hr/>
+
+<form th:method="POST" th:action="@{comments}" th:object="${ticket}">
+    <label for="text">Comment: </label>
+    <input th:name="text" type="text" id="text">
+    <br/>
+    <input type="submit" name="save edit" value="Add comment"/>
+</form>
+
+
+
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>All ticket</title>
+</head>
+<body>
+
+<h1> Hello
+<p th:text="${username}">VALUE</p>
+</h1>>
+
+
+<div th:each="ticket : ${tickets}">
+    <form th:method="PATCH" th:action="@{/tickets/action/{id}(id=${ticket.getId()})}" th:object="${ticket}">
+    <a   th:text="${ticket.getId() + ', ' + ticket.getName_ticket()+ ','+
+    ticket.getDesired_resolution_date()+','+ ticket.getUrgency_id()+
+    ','+ticket.getState_id()}">ticket</a>
+    <select name="action"  onchange="this.form.submit()">  //можно сделать ссылкой на разные html для разных ролей
+        <option  >--</option>
+        <option  value="Submit">Submit</option>
+        <option  value="Approve">Approve </option>
+        <option  value="Decline">Decline</option>
+        <option  value="Cancel">Cancel</option>
+        <option  value="Assign to Me">Assign to Me</option>
+        <option  value="Done">Done</option>
+        <option  value="Leave Feedback">Leave Feedback</option>
+        <option  value="View Feedback">View Feedback</option>
+    </select>
+        <a th:href="@{/tickets/{id}/edit(id=${ticket.getId()})}">Edit</a>
+        <a th:href="@{/tickets/{id}/overView(id=${ticket.getId()})}">overView</a>
+    </form>
+</div>
+<br/>
+<hr/>
+
+
+<div align= "center">
+    <form method="GET" action="logout">
+        <p><input type="submit" Value="Submit"></p>
+    </form>
+</div>
+
+<a href="tickets/create">Create new Ticket</a>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>TicketOverview</title>
+</head>
+<body>
+
+    <div th:fragment="copyOverview">
+
+    <h2> <label for="name">Ticket -  </label>
+    <a th:text="${ticket.getName_ticket()}" id="name">ticket</a> </h2>
+    <br/>
+
+    <label for="created_on">Created on: </label>
+    <a th:text="${ticket.getCreated_on()}" id="created_on">created_on</a>
+    <br/>
+
+    <label for="state_id">Status: </label>
+    <a th:text="${ticket.getState_id()}" id="state_id">status</a>
+    <br/>
+
+    <label for="urgency">Urgency: </label>
+    <a th:text="${ticket.getUrgency_id()}" id="urgency">urgency</a>
+    </br>
+
+    <label for="category">Category: </label>
+    <a th:text="${category.getName()}" id="category">urgency</a>
+    </br>
+
+    <label for="desired_resolution_date">Desired_resolution_date: </label>
+    <a th:text="${ticket.getDesired_resolution_date()}" id="desired_resolution_date">Desired_resolution_date</a>
+    </br>
+
+    <label for="owner_id">Owner: </label>
+    <a th:text="${ticket.getOwner_id()}" id="owner_id">Owner</a>
+    </br>
+
+    <label for="approver_id">Approver: </label>
+    <a th:text="${ticket.getApprover_id()}" id="approver_id">approver</a>
+    </br>
+
+    <label for="assignee_id">Assignee: </label>
+    <a th:text="${ticket.getAssignee_id()}" id="assignee_id">assignee</a>
+    </br>
+
+    <label for="description">description: </label>
+    <a th:text="${ticket.getDescription()}" id="description">assignee</a>
+    <br/>
+
+        <a th:href="@{/tickets/{id}/edit(id=${ticket.getId()})}">Edit</a>
+        <br/>
+        <a th:href="@{/tickets}">Ticket List</a>
+        <br/>
+        <br/>
+    </div>
+
+<h3><a th:href="@{/tickets/{id}/overView/comments(id=${ticket.getId()})}">Comments</a></h3>
+    <br/>
+    <div th:insert="~{tickets/history :: copyHistory}">copyHistory</div>
+    <br/>
+
+</body>
+</html>
