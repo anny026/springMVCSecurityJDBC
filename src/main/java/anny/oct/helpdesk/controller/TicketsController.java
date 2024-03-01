@@ -47,8 +47,7 @@ public class TicketsController {
         final CustomUserDetails principal = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         model.addAttribute("username", customUserDetails.getUser().getFirstName());
         model.addAttribute("user", customUserDetails.getUser());
-        User user = customUserDetails.getUser();  // или передавать principal??
-//        model.addAttribute("tickets", ticketDAO.getAllTickets());  //попробовать через сервис
+        User user = customUserDetails.getUser();  // или передавать principal
         if (Role.values()[user.getRoleId()-1]==Role.ROLE_EMPLOYEE) {
         logger.log(Level.INFO, Role.values()[user.getRoleId()-1]+"==========="+Role.ROLE_EMPLOYEE);
         model.addAttribute("tickets", ticketService.getTicketEmployee(user));}
@@ -64,20 +63,19 @@ public class TicketsController {
         return "tickets/allTickets";
     }
 
-  //  @Secured({ "ROLE_EMPLOYEE", "ROLE_MANAGER" })
+
     @GetMapping("/create")
-    public String getLoginPage(Model model,
+    public String getCreatePage(Model model,
                                @ModelAttribute("ticket") Ticket ticket) {
         model.addAttribute("categories", categoryDAO.getCategories());
         return "tickets/createTicket";
     }
 
-   // @Secured({ "ROLE_EMPLOYEE", "ROLE_MANAGER" })
+
     @PostMapping(params = "submit")
     public String createNew(@ModelAttribute("ticket") @Valid Ticket ticket,
                             BindingResult bindingResult,
                             Model model,
-//                            @ModelAttribute("text") @Valid Comment comment,
                             @RequestParam(value = "text", required = false) String comment,
                             @AuthenticationPrincipal CustomUserDetails customUserDetails
                             ) {
@@ -101,7 +99,6 @@ public class TicketsController {
                              BindingResult bindingResult,
                              @RequestParam(value = "text", required = false) String comment,
                              @AuthenticationPrincipal CustomUserDetails customUserDetails
-                           //  @ModelAttribute("user") User user,
                          ) {
         if (bindingResult.hasErrors())
             return "redirect:/tickets/create";
@@ -124,16 +121,17 @@ public class TicketsController {
     }
 
 
-//    @PatchMapping("/{id}")  //перестал работать
+
     @PostMapping("/{id}")
-    public String update(@ModelAttribute("ticket") @Valid Ticket new_Ticket, BindingResult bindingResult,
+    public String update(@ModelAttribute("ticket") @Valid Ticket new_Ticket,
+                         BindingResult bindingResult,
                          @PathVariable("id") int id_updatedTicket,
                          @RequestParam(value = "save edit") String param,
                          @RequestParam(value = "text", required = false) String comment,
                          @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
         if (bindingResult.hasErrors())
-            return "tickets/editTicket";  //работает не корректно?
+            return "redirect:/tickets/{id}/edit";
         User user = customUserDetails.getUser();
         int id_status;
         logger.log(Level.INFO, "RequestParam    "+param);
@@ -147,21 +145,18 @@ public class TicketsController {
         return "redirect:/tickets";
     }
 
-  //  @RequestMapping(value="/action/{id}", method=RequestMethod.PATCH)  //Исправить!!!!
-  //  @PatchMapping( "/action/{id}")   //Исправить!!
-  @PostMapping( "/action/{id}")     //Заменить на PATCH!!??
+
+  @PostMapping( "/action/{id}")
     public String updateStatus(@ModelAttribute("ticket") @Valid Ticket ticket, BindingResult bindingResult,
                                @AuthenticationPrincipal CustomUserDetails customUserDetails,
                                @PathVariable("id") int id,
                                @RequestParam ("action") String action)
                           {
-//        if (bindingResult.hasErrors())
-//            return "tickets/editTicket";
+        if (bindingResult.hasErrors())
+            return "redirect:/tickets/{id}/edit";
         User user = customUserDetails.getUser();
         int id_status=1;
-                              System.out.println(action); // test
-                              System.out.println("ticket   "+ticket);  //test
-        switch (action) {
+           switch (action) {
             case("Submit"):
                 id_status = 2;
                 break;
@@ -188,14 +183,10 @@ public class TicketsController {
                 return "feedback/viewFeedback";
         }
         if (id_status!=0) {
-//        ticketDAO.updateStatus(id, id_status);//заменим на сервис
             String stateBefore= State.values()[(ticketDAO.getTicket(id).getState_id())-1].getName();
             logger.log(Level.INFO, "stateBefore   ***********  "+ stateBefore);
             String stateAfter = State.values()[id_status-1].getName();
- //???перенести историю в ticketService
             logger.log(Level.INFO, "stateAfter   ***********  "+ stateAfter);
-//            historyDAO.saveHistory("Ticket Status is changed",
-//           "Ticket Status is changed from " + stateBefore+ " to "+stateAfter, id, user);
             ticketService.updateStatusTicket(id, id_status, user, stateBefore, stateAfter);
         }
         return "redirect:/tickets";
@@ -232,8 +223,8 @@ public class TicketsController {
                          @PathVariable("id") int id_updatedTicket,
                          @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
-//        if (bindingResult.hasErrors())
-//            return "tickets/editTicket";
+        if (bindingResult.hasErrors())
+            return "tickets/editTicket";
         User user = customUserDetails.getUser();
         logger.log(Level.INFO, "RequestParam    "+comment);
         commentDAO.saveComment(comment, id_updatedTicket, user);
@@ -249,10 +240,6 @@ public class TicketsController {
         model.addAttribute("histories", historyDAO.getHistory(id));
         return "tickets/history";
     }
-
-
-
-
 
 }
 
